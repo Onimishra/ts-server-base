@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
+import { AsyncLocalStorage } from 'async_hooks';
 import { container } from 'tsyringe';
+import { LoggerToken } from './domain/contract/Logger';
+import ConsoleLogger from './external/ConsoleLogger';
 
 // Make contract bindings here
+container.registerInstance(AsyncLocalStorage, new AsyncLocalStorage());
+container.registerSingleton(LoggerToken, ConsoleLogger);
 
 // End bindings
 

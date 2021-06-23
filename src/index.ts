@@ -1,15 +1,47 @@
-import Hapi from '@hapi/hapi';
 //@ts-expect-error Blipp does not have types
 import Blipp from 'blipp';
+import Hapi, { Request, ResponseObject } from '@hapi/hapi';
+import { AsyncLocalStorage } from 'async_hooks';
+import ShortUniqueId from 'short-unique-id';
 
-import './container';
+import container from './container';
 import routes from './delivery/hapi/index';
+import Logger, { LoggerToken } from './domain/contract/Logger';
 
 const initRestServer = async () => {
   // Create server
   const server = new Hapi.Server({
     host: 'localhost',
     port: 3030,
+  });
+
+  const shortUuid = new ShortUniqueId();
+  const logger = container.resolve<Logger>(LoggerToken);
+
+  server.ext('onRequest', (request, h) => {
+    // TODO: Get requestId from header, to track acorss services :mvi 2021-02-12
+    container.resolve(AsyncLocalStorage).enterWith({ requestId: shortUuid() });
+    logger.debug('Starting request');
+    return h.continue;
+  });
+
+  // Request and error log on top level
+  server.events.on('response', (request: Request) => {
+    // Unfortunately, this event is dispatched at a point where the requestId wrapper no longer applies :mvi
+    const { statusCode } = request.response as ResponseObject;
+
+    // @ts-expect-error Hapi does not have a way to access the thrown error - this is the only way I could find.
+    const error = request.response._error as Boom; // eslint-disable-line
+
+    const traceMessage = `${request.info.remoteAddress} - ${request.method.toUpperCase()} - ${request.url.pathname} : ${statusCode}`;
+
+    logger.trace(traceMessage);
+
+    if (statusCode >= 500) {
+      logger.error(`${traceMessage}\n`, error);
+    } else if (statusCode >= 300) {
+      logger.warn(`${traceMessage}\n`, error);
+    }
   });
 
   // Register plugins
@@ -20,7 +52,7 @@ const initRestServer = async () => {
 
   // Start server
   await server.start();
-  console.log('Server started');
+  logger.info('Server started');
 }
 
 const init = async () => {
