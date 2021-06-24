@@ -1,6 +1,7 @@
 //@ts-expect-error Blipp does not have types
 import Blipp from 'blipp';
 import Hapi, { Request, ResponseObject } from '@hapi/hapi';
+import dotenv from 'dotenv'; dotenv.config();
 import { AsyncLocalStorage } from 'async_hooks';
 import ShortUniqueId from 'short-unique-id';
 

@@ -7,11 +7,13 @@ import stringifySafe from 'json-stringify-safe';
 import chalk from 'chalk';
 
 import Logger from '../domain/contract/Logger';
+import { Config, ConfigToken } from '../config';
 
 @injectable()
 class ConsoleLogger implements Logger {
   constructor(
     @inject(AsyncLocalStorage) private readonly asyncStorage: AsyncLocalStorage<{ requestId: string | undefined }>,
+    @inject(ConfigToken) private readonly config: Config,
   ) { }
 
   private write(func: Console['log'], message: string, e?: any) {
@@ -24,33 +26,47 @@ class ConsoleLogger implements Logger {
   }
 
   metric(message: string): void {
-    this.write(console.log, `${chalk.white('METRICS')}: ${message}`);
+    if (this.config.env === 'local') {
+      this.write(console.log, `${chalk.white('METRICS')}: ${message}`);
+    }
   }
 
   // This should only be for local development, while developing.
   // The text will get highlighted in the terminal, to make it easier to read
   test(message: string, e?: any): void {
-    this.write(console.log, `${chalk.cyanBright('TEST')}:  ${message}`, e);
+    if (this.config.env === 'local') {
+      this.write(console.log, `${chalk.cyanBright('TEST')}:  ${message}`, e);
+    }
   }
 
   debug(message: string, e?: any): void {
-    this.write(console.log, `${chalk.gray('DEBUG')}: ${message}`, e);
+    if (this.config.logging.levels.includes('debug')) {
+      this.write(console.log, `${chalk.gray('DEBUG')}: ${message}`, e);
+    }
   }
 
   trace(message: string, e?: any): void {
-    this.write(console.log, `${chalk.green('TRACE')}: ${message}`, e);
+    if (this.config.logging.levels.includes('trace')) {
+      this.write(console.log, `${chalk.green('TRACE')}: ${message}`, e);
+    }
   }
 
   info(message: string, e?: any): void {
-    this.write(console.log, `${chalk.blue('INFO')}:  ${message}`, e);
+    if (this.config.logging.levels.includes('info')) {
+      this.write(console.log, `${chalk.blueBright('INFO')}:  ${message}`, e);
+    }
   }
 
   warn(message: string, e?: any): void {
-    this.write(console.warn, `${chalk.yellow('WARN')}:  ${message}`, e);
+    if (this.config.logging.levels.includes('warn')) {
+      this.write(console.warn, `${chalk.yellow('WARN')}:  ${message}`, e);
+    }
   }
 
   error(message: string, e?: any): void {
-    this.write(console.error, `${chalk.red('ERROR')}: ${message}`, e);
+    if (this.config.logging.levels.includes('error')) {
+      this.write(console.error, `${chalk.red('ERROR')}: ${message}`, e);
+    }
   }
 }
 
