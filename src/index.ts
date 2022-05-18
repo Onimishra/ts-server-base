@@ -36,12 +36,12 @@ const initRestServer = async () => {
 
     const traceMessage = `${request.info.remoteAddress} - ${request.method.toUpperCase()} - ${request.url.pathname} : ${statusCode}`;
 
-    logger.trace(traceMessage);
-
     if (statusCode >= 500) {
       logger.error(`${traceMessage}\n`, error);
     } else if (statusCode >= 300) {
       logger.warn(`${traceMessage}\n`, error);
+    } else {
+      logger.trace(traceMessage);
     }
   });
 

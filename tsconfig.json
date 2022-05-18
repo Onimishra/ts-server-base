@@ -5,14 +5,24 @@
       "ES2019.Array",
       "ES2020.Promise"
     ],
+    "baseUrl": "./src",
+    "outDir": "./build",
     "module": "commonjs",
     "sourceMap": true,
-    "noImplicitAny": true,
     "esModuleInterop": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+
+    // Rules
     "strict": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "noImplicitAny": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
   },
-  "exclude": ["./lib"]
+  "exclude": ["./build"]
 }
