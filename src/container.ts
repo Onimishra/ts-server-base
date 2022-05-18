@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'reflect-metadata';
 import { AsyncLocalStorage } from 'async_hooks';
+
 import { container } from 'tsyringe';
+
 import config, { ConfigToken } from './config';
-
 import { LoggerToken } from './domain/contract/Logger';
-
 import ConsoleLogger from './external/ConsoleLogger';
 
 // Make contract bindings here

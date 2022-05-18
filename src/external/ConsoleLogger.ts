@@ -2,12 +2,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AsyncLocalStorage } from 'async_hooks';
 
-import { injectable, inject } from 'tsyringe';
-import stringifySafe from 'json-stringify-safe';
 import chalk from 'chalk';
+import stringifySafe from 'json-stringify-safe';
+import { injectable, inject } from 'tsyringe';
 
-import Logger from '../domain/contract/Logger';
 import { Config, ConfigToken } from '../config';
+import Logger from '../domain/contract/Logger';
 
 @injectable()
 class ConsoleLogger implements Logger {

@@ -1,5 +1,6 @@
 import { Request } from '@hapi/hapi';
 import { Controller, controller, get } from 'hapi-decorators';
+
 import Container from '../../container';
 import ExampleAction from '../../domain/action/ExampleAction';
 
